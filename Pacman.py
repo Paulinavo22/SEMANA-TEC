@@ -123,15 +123,31 @@ def move():
         if valid(point + course):
             point.move(course)
         else:
+            # Direcciones posibles
             options = [
                 vector(5, 0),
                 vector(-5, 0),
                 vector(0, 5),
                 vector(0, -5),
             ]
-            plan = choice(options)
-            course.x = plan.x
-            course.y = plan.y
+
+            # Elegir la dirección que acerque más a Pac-Man
+            best = None
+            min_dist = 1e9
+            for option in options:
+                new_pos = point + option
+                if not valid(new_pos):
+                    continue
+                dist = abs(new_pos - pacman)
+                if dist < min_dist:
+                    best = option
+                    min_dist = dist
+
+            # Si encontró una dirección válida, usarla
+            if best:
+                course.x = best.x
+                course.y = best.y
+                point.move(course)
 
         up()
         goto(point.x + 10, point.y + 10)
