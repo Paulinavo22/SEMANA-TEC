@@ -2,15 +2,23 @@ from random import randrange, choice
 from turtle import *
 
 from freegames import square, vector
+from time import sleep
 
-colors = ['blue', 'green', 'purple', 'orange', 'pink']
+colors = ["blue", "green", "purple", "orange", "pink"]
 
 snakec = choice(colors)
 foodc = choice([c for c in colors if c != snakec])
 
 food = vector(0, 0)
+
 snake = [vector(10, 0)]
 aim = vector(0, -10)
+
+
+def change_food():
+    global food
+    food.x = randrange(-15, 15) * 10
+    food.y = randrange(-15, 15) * 10
 
 
 def change(x, y):
@@ -24,27 +32,33 @@ def inside(head):
     return -200 < head.x < 190 and -200 < head.y < 190
 
 
+cycles = 0
+
+
 def move():
     """Move snake forward one segment."""
     head = snake[-1].copy()
     head.move(aim)
+    global cycles
 
     if not inside(head) or head in snake:
-        square(head.x, head.y, 9, 'red')
+        square(head.x, head.y, 9, "red")
         update()
         return
 
     snake.append(head)
 
     if head == food:
-        print('Snake:', len(snake))
-        food.x = randrange(-15, 15) * 10
-        food.y = randrange(-15, 15) * 10
+        print("Snake:", len(snake))
+        cycles = 0
+        change_food()
     else:
         snake.pop(0)
-
     clear()
-
+    cycles += 1
+    if cycles == 35:
+        cycles = 0
+        change_food()
     for body in snake:
         square(body.x, body.y, 9, snakec)
 
@@ -57,9 +71,9 @@ setup(420, 420, 370, 0)
 hideturtle()
 tracer(False)
 listen()
-onkey(lambda: change(10, 0), 'Right')
-onkey(lambda: change(-10, 0), 'Left')
-onkey(lambda: change(0, 10), 'Up')
-onkey(lambda: change(0, -10), 'Down')
+onkey(lambda: change(10, 0), "Right")
+onkey(lambda: change(-10, 0), "Left")
+onkey(lambda: change(0, 10), "Up")
+onkey(lambda: change(0, -10), "Down")
 move()
 done()
